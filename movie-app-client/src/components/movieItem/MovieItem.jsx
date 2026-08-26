@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Badge from 'react-bootstrap/Badge';
 
-const MovieItem = ({ title, image, rating, duration, summary, available }) => {
+const MovieItem = ({ title, imageUrl, rating, duration, summary, available }) => {
     const [newTitle, setNewTitle] = useState(title);
 
     const handleChangeTitle = () => {
@@ -12,7 +12,7 @@ const MovieItem = ({ title, image, rating, duration, summary, available }) => {
 
     return (
         <Card bg="dark" text="light" className="h-100 shadow-lg border-secondary movie-card">
-            <Card.Img variant="top" src={image} className="object-fit-cover movie-card-img" />
+            <Card.Img variant="top" src={imageUrl} className="object-fit-cover movie-card-img" />
             <Card.Body className="d-flex flex-column">
                 <div className="d-flex justify-content-between align-items-start gap-2 mb-2">
                     <Card.Title className="mb-0 movie-card-title">{newTitle}</Card.Title>
