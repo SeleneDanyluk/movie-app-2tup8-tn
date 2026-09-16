@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 
 const NewMovie = ({ onMovieAdd }) => {
+
+    const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
     const [duration, setDuration] = useState(0);
@@ -39,8 +42,8 @@ const NewMovie = ({ onMovieAdd }) => {
 
         const data = {
             title,
-            duration,
-            rating,
+            duration: parseInt(duration, 10),
+            rating: parseFloat(rating),
             imageUrl,
             summary,
             available
@@ -57,7 +60,7 @@ const NewMovie = ({ onMovieAdd }) => {
     };
 
     return (
-        <Card className="m-4 w-50 shadow-lg border-secondary" bg="dark" text="light">
+        <Card className="mx-auto my-4 shadow-lg border-secondary" bg="dark" text="light" style={{ maxWidth: "720px" }}>
             <Card.Body>
                 <Card.Title className="mb-3">Agregar película</Card.Title>
                 <Form onSubmit={handleSubmit}>
@@ -128,17 +131,23 @@ const NewMovie = ({ onMovieAdd }) => {
                         </Col>
                     </Row>
                     <Row className="justify-content-end">
-                        <Col md={4} className="d-flex flex-column justify-content-end align-items-end">
+                        <Col md={5} className="d-flex flex-column justify-content-end align-items-end">
                             <Form.Check
                                 type="switch"
                                 id="available"
                                 className="mb-3"
                                 label="¿Disponible?"
                                 onChange={handleChangeAvailable}
+                                checked={available}
                             />
-                            <Button variant="success" type="submit">
-                                Agregar película
-                            </Button>
+                            <div className="d-flex gap-2">
+                                <Button variant="secondary" type="button" onClick={() => navigate("/catalog")}>
+                                    Volver
+                                </Button>
+                                <Button variant="success" type="submit">
+                                    Agregar película
+                                </Button>
+                            </div>
                         </Col>
                     </Row>
                 </Form>
