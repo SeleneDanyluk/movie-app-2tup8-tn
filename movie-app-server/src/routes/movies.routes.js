@@ -14,8 +14,19 @@ router.get('/movies/:id', async (req, res) => {
     res.json(movie);
 });
 
-router.post('/movies', (req, res) => {
-    res.send('Movie created successfully');
+router.post('/movies', async (req, res) => {
+    const { title, duration, rating, imageUrl, summary, available } = req.body;
+
+    const movie = await Movie.create({
+        title,
+        duration,
+        rating,
+        imageUrl,
+        summary,
+        available
+    });
+
+    res.json(movie);
 });
 
 router.put('/movies/:id', (req, res) => {
