@@ -29,9 +29,19 @@ router.post('/movies', async (req, res) => {
     res.json(movie);
 });
 
-router.put('/movies/:id', (req, res) => {
+router.put('/movies/:id', async (req, res) => {
     const movieId = req.params.id;
-    res.send(`Movie with ID: ${movieId} updated successfully`);
+    const updatedMovie = req.body;
+
+    const movie = await Movie.findByPk(movieId);
+
+    if (!movie) {
+        return res.status(404).json({ message: 'Pelicula no encontrada' });
+    }
+
+    await movie.update(updatedMovie);
+
+    res.json(movie);
 });
 
 router.delete('/movies/:id', (req, res) => {
