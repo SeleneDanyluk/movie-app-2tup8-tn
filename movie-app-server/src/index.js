@@ -2,7 +2,8 @@ import express from 'express';
 import moviesRouter from './routes/movies.routes.js';
 import { sequelize } from './db.js';
 
-import Movie from './models/Movie.js';
+import Movie from './models/movie/Movie.js';
+import User from './models/user/User.js';
 
 const app = express();
 
