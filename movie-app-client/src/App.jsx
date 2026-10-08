@@ -5,6 +5,7 @@ import Login from './components/auth/login/Login.jsx';
 import Protected from './components/auth/protected/Protected.jsx';
 import Dashboard from './components/dashboard/Dashboard.jsx';
 import PageNotFound from './components/ui/pageNotFound/PageNotFound.jsx';
+import Register from './components/auth/register/Register.jsx';
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Navigate to="/login" replace />} />
           <Route path='/login' element={<Login onLogin={handleLogin} />} />
+          <Route path='/register' element={<Register />} />
           <Route
             path='/catalog/*'
             element={

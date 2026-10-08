@@ -65,9 +65,22 @@ const Register = () => {
             password: false
         });
 
-        alert(
-            `Usuario registrado: ${name} - ${email} - ${password}`
-        );
+        let data = {
+            name: name,
+            email: email,
+            password: password
+        };
+
+        fetch("http://localhost:3000/register", {
+            method: "POST",
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(res => console.log("User ID:", {res}))
+        .catch(err => console.log(err))
+
+        alert(`Usuario registrado: ${name}`)
 
         navigate("/login");
     };
