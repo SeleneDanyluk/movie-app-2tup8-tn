@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const Login = ({ onLogin }) => {
 
@@ -32,24 +33,37 @@ const Login = ({ onLogin }) => {
 
         if (!emailRef.current.value.length) {
             setErrors({ ...errors, email: true });
-            alert("¡Email vacío!");
+            toast.error("¡Email vacío!");
             emailRef.current.focus();
             return;
         }
 
         if (!password.length || password.length < 7) {
             setErrors({ ...errors, password: true });
-            alert("¡Password vacío o demasiado corto!");
+            toast.error("¡Password vacío o demasiado corto!");
             passwordRef.current.focus();
             return;
         }
 
-        setErrors({ email: false, password: false });
-        alert(`El email ingresado es: ${email} y el password es ${password}`);
+        let data = {
+            email,
+            password
+        }
 
-    
-        onLogin();
-        navigate("/catalog");
+        fetch("http://localhost:3000/login", {
+            method: "POST",
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify(data)
+        })
+            .then(res => res.json())
+            .then(res => {
+                setErrors({ email: false, password: false });
+                toast.success("Sesion iniciada con exito")
+                onLogin();
+                navigate("/catalog");
+                localStorage.setItem("TUPmovies", res.token);
+            })
+            .catch(err => console.log(err))
     };
 
     return (
@@ -62,7 +76,6 @@ const Login = ({ onLogin }) => {
                     <FormGroup className="mb-4">
                         <Form.Control
                             type="email"
-                            required
                             ref={emailRef}
                             placeholder="Ingresar email"
                             onChange={handleEmailChange}
@@ -73,7 +86,6 @@ const Login = ({ onLogin }) => {
                     <FormGroup className="mb-4">
                         <Form.Control
                             type="password"
-                            required
                             ref={passwordRef}
                             placeholder="Ingresar contraseña"
                             onChange={handlePasswordChange}

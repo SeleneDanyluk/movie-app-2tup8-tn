@@ -13,12 +13,7 @@ const Dashboard = ({ onLogout }) => {
   const [movies, setMovies] = useState([]);
 
   const handleMovieAdd = (movieData) => {
-    const data = {
-      ...movieData,
-      id: Math.random()
-    }
-
-    setMovies((prevMovies) => [data, ...prevMovies]);
+    setMovies((prevMovies) => [movieData, ...prevMovies]);
     navigate("/catalog", { replace: true });
   }
 
@@ -27,7 +22,12 @@ const Dashboard = ({ onLogout }) => {
   }
 
   useEffect(() => {
-    fetch("http://localhost:3000/movies")
+    fetch("http://localhost:3000/movies", {
+      headers: {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("TUPmovies")}`
+      }
+    })
       .then(response => response.json())
       .then(data => setMovies(data))
       .catch(err => console.log(err))

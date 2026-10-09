@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
 
 const Register = () => {
-
     const navigate = useNavigate();
 
     const [name, setName] = useState("");
@@ -77,7 +76,7 @@ const Register = () => {
             body: JSON.stringify(data)
         })
         .then(res => res.json())
-        .then(res => console.log("User ID:", {res}))
+        .then(res => console.log(res))
         .catch(err => console.log(err))
 
         alert(`Usuario registrado: ${name}`)
