@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import NewMovie from '../newMovie/NewMovie.jsx';
 import Movies from '../movies/Movies.jsx';
 import MovieDetails from '../movieDetails/MovieDetails.jsx';
+import { AuthenticationContext } from '../services/auth/auth.context.jsx';
 
-const Dashboard = ({ onLogout }) => {
-
+const Dashboard = () => {
+  const { token, handleUserLogout } = useContext(AuthenticationContext);
   const navigate = useNavigate();
 
   const [movies, setMovies] = useState([]);
@@ -25,7 +26,7 @@ const Dashboard = ({ onLogout }) => {
     fetch("http://localhost:3000/movies", {
       headers: {
         "Accept": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("TUPmovies")}`
+        "Authorization": `Bearer ${token}`
       }
     })
       .then(response => response.json())
@@ -35,7 +36,7 @@ const Dashboard = ({ onLogout }) => {
 
 
   const handleLogout = () => {
-    onLogout();
+    handleUserLogout();
     navigate("/login", { replace: true });
   }
 

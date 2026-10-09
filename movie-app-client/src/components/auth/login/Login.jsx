@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { AuthenticationContext } from "../../services/auth/auth.context";
 
-const Login = ({ onLogin }) => {
-
+const Login = () => {
+    const { handleUserLogin } = useContext(AuthenticationContext)
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -59,9 +60,8 @@ const Login = ({ onLogin }) => {
             .then(res => {
                 setErrors({ email: false, password: false });
                 toast.success("Sesion iniciada con exito")
-                onLogin();
                 navigate("/catalog");
-                localStorage.setItem("TUPmovies", res.token);
+                handleUserLogin(res.token);
             })
             .catch(err => console.log(err))
     };
