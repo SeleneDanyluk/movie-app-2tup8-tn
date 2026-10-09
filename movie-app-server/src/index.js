@@ -1,5 +1,6 @@
 import express from 'express';
 import moviesRouter from './routes/movies.routes.js';
+import usersRouter from './routes/users.routes.js';
 import { sequelize } from './db.js';
 
 import Movie from './models/movie/Movie.js';
@@ -17,8 +18,12 @@ try {
         res.setHeader('Access-Control-Allow-Headers', '*');
         next();
     });
+
     app.listen(port);
+
     app.use(moviesRouter);
+    app.use(usersRouter);        
+
     await sequelize.sync();
     console.log('Connection has been established successfully.');
 } catch (error) {
