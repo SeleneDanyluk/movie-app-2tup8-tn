@@ -49,7 +49,14 @@ const NewMovie = ({ onMovieAdd }) => {
             available
         }
 
-        onMovieAdd(data);
+        fetch("http://localhost:3000/movies", {
+            method: "POST",
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => onMovieAdd(data))
+        .catch(err => console.log(err))
 
         setTitle("");
         setAvailable(false);
