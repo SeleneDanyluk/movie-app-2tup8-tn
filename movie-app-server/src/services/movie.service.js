@@ -45,7 +45,11 @@ export const deleteMovie = async (req, res) => {
     const movieId = req.params.id;
     const movie = await Movie.findByPk(movieId);
 
+    if (!movie) {
+        return res.status(404).json({ message: `Pelicula con id: ${movieId} no encontrada.` });
+    }
+
     await movie.destroy();
 
-    res.send(`Pelicula con id: ${movieId} eliminada.`);
+    res.status(200).json({ message: `Pelicula con id: ${movieId} eliminada.` });
 };

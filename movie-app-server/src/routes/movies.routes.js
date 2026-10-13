@@ -8,10 +8,10 @@ router.get('/movies', verifyToken, getAllMovies);
 
 router.get('/movies/:id', verifyToken, getMovieById);
 
-router.post('/movies', createMovie);
+router.post('/movies', verifyToken, createMovie);
 
-router.put('/movies/:id', updateMovie);
+router.put('/movies/:id', verifyToken, updateMovie);
 
-router.delete('/movies/:id', deleteMovie);
+router.delete('/movies/:id', verifyToken, deleteMovie);
 
 export default router;
