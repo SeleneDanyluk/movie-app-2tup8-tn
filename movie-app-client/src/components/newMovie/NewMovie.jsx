@@ -3,13 +3,14 @@ import { useLocation, useNavigate } from "react-router";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useContext } from "react";
 import { AuthenticationContext } from "../services/auth/auth.context";
+import { errorToast, successToast } from "../shared/toast/toast";
 
 const NewMovie = ({ onMovieAdd }) => {
     const navigate = useNavigate();
     const { state } = useLocation();
     const { movie } = state || {};
     const isEditing = movie !== undefined ? true : false;
-    
+
     const { token } = useContext(AuthenticationContext);
 
     const [title, setTitle] = useState(movie?.title);
@@ -17,7 +18,7 @@ const NewMovie = ({ onMovieAdd }) => {
     const [imageUrl, setImageUrl] = useState(movie?.imageUrl);
     const [rating, setRating] = useState(movie?.rating);
     const [summary, setSummary] = useState(movie?.summary);
-    const [available, setAvailable] = useState(movie?.available);
+    const [available, setAvailable] = useState(movie?.available ?? false);
 
     const handleChangeTitle = (e) => {
         setTitle(e.target.value);
@@ -61,19 +62,30 @@ const NewMovie = ({ onMovieAdd }) => {
             method: isEditing ? "PUT" : "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
-                "Content-type": "application/json" },
+                "Content-type": "application/json"
+            },
             body: JSON.stringify(data)
         })
-            .then(response => response.json())
-            .then(data => onMovieAdd(data))
-            .catch(err => console.log(err))
+            .then(res => {
+                if (!res.ok)
+                    return res.json().then(data => {
+                        errorToast(data.message);
+                        throw new Error(data.message);
+                    });
 
-        setTitle("");
-        setAvailable(false);
-        setDuration(0);
-        setRating(0);
-        setSummary("");
-        setImageUrl("");
+                return res.json();
+            })
+            .then(res => {
+                onMovieAdd(res.data)
+                successToast(res.message)
+                setTitle("");
+                setAvailable(false);
+                setDuration(0);
+                setRating(0);
+                setSummary("");
+                setImageUrl("");
+            })
+            .catch(err => console.log(err))
     };
 
     return (

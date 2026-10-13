@@ -44,10 +44,11 @@ const MovieItem = ({ id, title, imageUrl, rating, duration, summary, available, 
             headers: { "Authorization": `Bearer ${token}` }
         })
             .then(res => {
-                if (!res.ok) {
-                    errorToast(res.message);
-                    throw new Error(res.message);
-                }
+                if (!res.ok)
+                    return res.json().then(data => {
+                        errorToast(data.message);
+                        throw new Error(data.message);
+                    });
 
                 return res.json();
             })
