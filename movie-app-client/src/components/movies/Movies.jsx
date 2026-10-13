@@ -3,17 +3,19 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import MovieItem from '../movieItem/MovieItem.jsx';
 import MovieSearch from '../movieSearch/MovieSearch.jsx';
+import useDebounce from '../custom/useDebounce.jsx';
 
 const Movies = ({ movies, onMovieDelete }) => {
-
     const [search, setSearch] = useState("");
+
+    const debounceSearch = useDebounce(search);
 
     const handleSearch = (e) => {
         setSearch(e.target.value);
     }
 
     const filteredMovies = movies.filter((movie) =>
-        movie.title.toLowerCase().includes(search.toLowerCase())
+        movie.title.toLowerCase().includes(debounceSearch.toLowerCase())
     );
 
     return (
