@@ -14,6 +14,14 @@ export const getMovieById = async (req, res) => {
 export const createMovie = async (req, res) => {
     const { title, duration, rating, imageUrl, summary, available } = req.body;
 
+    if (!title) {
+        return res.status(400).json({ message: "Titulo no puede estar vacio" })
+    }
+
+    if (!duration) {
+        return res.status(400).json({ message: "Duracion no puede estar vacio" })
+    }
+
     const movie = await Movie.create({
         title,
         duration,
@@ -23,7 +31,7 @@ export const createMovie = async (req, res) => {
         available
     });
 
-    res.json(movie);
+    res.status(201).json({ message: "Pelicula creada con exito", data: movie });
 };
 
 export const updateMovie = async (req, res) => {
@@ -38,7 +46,7 @@ export const updateMovie = async (req, res) => {
 
     await movie.update(updatedMovie);
 
-    res.json(movie);
+    res.status(200).json({ message: "Pelicula actualizada con exito", data: movie });
 };
 
 export const deleteMovie = async (req, res) => {
