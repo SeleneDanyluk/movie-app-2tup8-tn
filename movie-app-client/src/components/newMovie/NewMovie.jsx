@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import { useContext } from "react";
+import { AuthenticationContext } from "../services/auth/auth.context";
 
 const NewMovie = ({ onMovieAdd }) => {
     const navigate = useNavigate();
     const { state } = useLocation();
     const { movie } = state || {};
     const isEditing = movie !== undefined ? true : false;
+    
+    const { token } = useContext(AuthenticationContext);
 
     const [title, setTitle] = useState(movie?.title);
     const [duration, setDuration] = useState(movie?.duration);
@@ -55,7 +59,9 @@ const NewMovie = ({ onMovieAdd }) => {
 
         fetch(url, {
             method: isEditing ? "PUT" : "POST",
-            headers: { "Content-type": "application/json" },
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-type": "application/json" },
             body: JSON.stringify(data)
         })
             .then(response => response.json())
