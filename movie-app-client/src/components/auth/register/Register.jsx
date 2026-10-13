@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
+import { errorToast, successToast } from "../../shared/toast/toast";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -75,13 +76,20 @@ const Register = () => {
             headers: { "Content-type": "application/json" },
             body: JSON.stringify(data)
         })
-        .then(res => res.json())
-        .then(res => console.log(res))
-        .catch(err => console.log(err))
+            .then(res => {
+                if (!res.ok)
+                    return res.json().then(data => {
+                        errorToast(data.message);
+                        throw new Error(data.message);
+                    });
 
-        alert(`Usuario registrado: ${name}`)
-
-        navigate("/login");
+                return res.json();
+            })
+            .then(res => {
+                successToast(res.message)
+                navigate("/login");
+            })
+            .catch(err => console.log(err))
     };
 
     return (

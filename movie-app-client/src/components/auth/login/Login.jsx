@@ -1,8 +1,8 @@
 import { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
-import { toast } from "react-toastify";
 import { AuthenticationContext } from "../../services/auth/auth.context";
+import { errorToast, successToast } from "../../shared/toast/toast";
 
 const Login = () => {
     const { handleUserLogin } = useContext(AuthenticationContext)
@@ -34,14 +34,14 @@ const Login = () => {
 
         if (!emailRef.current.value.length) {
             setErrors({ ...errors, email: true });
-            toast.error("¡Email vacío!");
+            errorToast("¡Email vacío!");
             emailRef.current.focus();
             return;
         }
 
         if (!password.length || password.length < 7) {
             setErrors({ ...errors, password: true });
-            toast.error("¡Password vacío o demasiado corto!");
+            errorToast("¡Password vacío o demasiado corto!");
             passwordRef.current.focus();
             return;
         }
@@ -56,10 +56,18 @@ const Login = () => {
             headers: { "Content-type": "application/json" },
             body: JSON.stringify(data)
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok)
+                    return res.json().then(data => {
+                        errorToast(data.message);
+                        throw new Error(data.message);
+                    });
+
+                return res.json();
+            })
             .then(res => {
                 setErrors({ email: false, password: false });
-                toast.success("Sesion iniciada con exito")
+                successToast("Sesion iniciada con exito")
                 navigate("/catalog");
                 handleUserLogin(res.token);
             })
