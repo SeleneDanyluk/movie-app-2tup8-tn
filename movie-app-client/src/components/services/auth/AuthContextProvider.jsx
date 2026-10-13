@@ -3,7 +3,7 @@ import { AuthenticationContext } from "./auth.context"
 
 const tokenStorage = localStorage.getItem("TUPmovies");
 
-export const AuthenticationContextProvider = ({ children }) => {
+const AuthenticationContextProvider = ({ children }) => {
     const [token, setToken] = useState(tokenStorage);
 
     const handleUserLogin = (userToken) => {
@@ -22,3 +22,5 @@ export const AuthenticationContextProvider = ({ children }) => {
         </AuthenticationContext>
     )
 }
+
+export default AuthenticationContextProvider;

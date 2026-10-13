@@ -32,7 +32,7 @@ const Dashboard = () => {
       .then(response => response.json())
       .then(data => setMovies(data))
       .catch(err => console.log(err))
-  }, [])
+  }, [token])
 
 
   const handleLogout = () => {

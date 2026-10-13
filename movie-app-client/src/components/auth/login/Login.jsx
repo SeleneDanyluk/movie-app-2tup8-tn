@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
 import { AuthenticationContext } from "../../services/auth/auth.context";
 import { errorToast, successToast } from "../../shared/toast/toast";
+import ToggleTheme from "../../ui/toggleTheme/ToggleTheme";
 
 const Login = () => {
     const { handleUserLogin } = useContext(AuthenticationContext)
@@ -74,6 +75,10 @@ const Login = () => {
             .catch(err => console.log(err))
     };
 
+    const handleNavigateRegister = () => {
+        navigate("/register");
+    }
+
     return (
         <Card className="mt-5 mx-3 p-3 px-5 shadow">
             <Card.Body>
@@ -109,9 +114,16 @@ const Login = () => {
                         </p>
                     )}
 
-                    <Row>
-                        <Col />
-                        <Col md={6} className="d-flex justify-content-end">
+                    <Row className="justify-content-end">
+                        <Col xl={2} md={4} className="d-flex justify-content-end">
+                            <ToggleTheme />
+                        </Col>
+                        <Col xl={2} md={4} className="d-flex justify-content-end">
+                            <Button variant="secondary" onClick={handleNavigateRegister}>
+                                Registrarse
+                            </Button>
+                        </Col>
+                        <Col xl={2} md={4} className="d-flex justify-content-end">
                             <Button variant="secondary" type="submit">
                                 Iniciar sesión
                             </Button>
