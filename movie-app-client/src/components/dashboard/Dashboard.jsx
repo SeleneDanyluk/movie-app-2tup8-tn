@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
-import NewMovie from '../newMovie/NewMovie.jsx';
+import MovieForm from '../movieForm/MovieForm.jsx';
 import Movies from '../movies/Movies.jsx';
 import MovieDetails from '../movieDetails/MovieDetails.jsx';
 import { AuthenticationContext } from '../services/auth/auth.context.jsx';
@@ -60,7 +60,7 @@ const Dashboard = () => {
 
       <Routes>
         <Route index element={<Movies movies={movies} onMovieDelete={handleMovieDelete} />} />
-        <Route path="add-movie" element={<NewMovie onMovieAdd={handleMovieAdd} />} />
+        <Route path="add-movie" element={<MovieForm onMovieAdd={handleMovieAdd} />} />
         <Route path=":id" element={<MovieDetails />} />
       </Routes>
     </Container>

@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { AuthenticationContext } from "../services/auth/auth.context";
 import { errorToast, successToast } from "../shared/toast/toast";
 
-const NewMovie = ({ onMovieAdd }) => {
+const MovieForm = ({ onMovieAdd }) => {
     const navigate = useNavigate();
     const { state } = useLocation();
     const { movie } = state || {};
@@ -185,4 +185,4 @@ const NewMovie = ({ onMovieAdd }) => {
     );
 };
 
-export default NewMovie;
+export default MovieForm;
