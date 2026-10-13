@@ -30,4 +30,4 @@ try {
     console.error('Unable to connect to the database:', error);
 }
 
-console.log(`Server is running on port ${port}`); 
+console.log(`Server is running on port http://localhost:${port}`); 
