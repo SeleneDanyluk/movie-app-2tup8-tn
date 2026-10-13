@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 
 const NewMovie = ({ onMovieAdd }) => {
-
     const navigate = useNavigate();
+    const { state } = useLocation();
+    const { movie } = state || {};
+    const isEditing = movie !== undefined ? true : false;
 
-    const [title, setTitle] = useState("");
-    const [duration, setDuration] = useState(0);
-    const [imageUrl, setImageUrl] = useState("");
-    const [rating, setRating] = useState(0);
-    const [summary, setSummary] = useState("");
-    const [available, setAvailable] = useState(false);
+    const [title, setTitle] = useState(movie?.title);
+    const [duration, setDuration] = useState(movie?.duration);
+    const [imageUrl, setImageUrl] = useState(movie?.imageUrl);
+    const [rating, setRating] = useState(movie?.rating);
+    const [summary, setSummary] = useState(movie?.summary);
+    const [available, setAvailable] = useState(movie?.available);
 
     const handleChangeTitle = (e) => {
         setTitle(e.target.value);
@@ -49,14 +51,16 @@ const NewMovie = ({ onMovieAdd }) => {
             available
         }
 
-        fetch("http://localhost:3000/movies", {
-            method: "POST",
+        const url = isEditing ? `http://localhost:3000/movies/${movie.id}` : "http://localhost:3000/movies";
+
+        fetch(url, {
+            method: isEditing ? "PUT" : "POST",
             headers: { "Content-type": "application/json" },
             body: JSON.stringify(data)
         })
-        .then(response => response.json())
-        .then(data => onMovieAdd(data))
-        .catch(err => console.log(err))
+            .then(response => response.json())
+            .then(data => onMovieAdd(data))
+            .catch(err => console.log(err))
 
         setTitle("");
         setAvailable(false);
@@ -69,7 +73,7 @@ const NewMovie = ({ onMovieAdd }) => {
     return (
         <Card className="mx-auto my-4 shadow-lg border-secondary" bg="dark" text="light" style={{ maxWidth: "720px" }}>
             <Card.Body>
-                <Card.Title className="mb-3">Agregar película</Card.Title>
+                <Card.Title className="mb-3">{isEditing ? "Editar Pelicula" : "Agregar película"}</Card.Title>
                 <Form onSubmit={handleSubmit}>
                     <Row>
                         <Col md={8}>
@@ -152,7 +156,7 @@ const NewMovie = ({ onMovieAdd }) => {
                                     Volver
                                 </Button>
                                 <Button variant="success" type="submit">
-                                    Agregar película
+                                    {isEditing ? "Guardar" : "Agregar"}
                                 </Button>
                             </div>
                         </Col>
