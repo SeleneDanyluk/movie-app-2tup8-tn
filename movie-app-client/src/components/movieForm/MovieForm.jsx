@@ -1,17 +1,24 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import { useContext } from "react";
+import { AuthenticationContext } from "../services/auth/auth.context";
+import { errorToast, successToast } from "../shared/toast/toast";
 
-const NewMovie = ({ onMovieAdd }) => {
-
+const MovieForm = ({ onMovieAdd }) => {
     const navigate = useNavigate();
+    const { state } = useLocation();
+    const { movie } = state || {};
+    const isEditing = movie !== undefined ? true : false;
 
-    const [title, setTitle] = useState("");
-    const [duration, setDuration] = useState(0);
-    const [imageUrl, setImageUrl] = useState("");
-    const [rating, setRating] = useState(0);
-    const [summary, setSummary] = useState("");
-    const [available, setAvailable] = useState(false);
+    const { token } = useContext(AuthenticationContext);
+
+    const [title, setTitle] = useState(movie?.title);
+    const [duration, setDuration] = useState(movie?.duration);
+    const [imageUrl, setImageUrl] = useState(movie?.imageUrl);
+    const [rating, setRating] = useState(movie?.rating);
+    const [summary, setSummary] = useState(movie?.summary);
+    const [available, setAvailable] = useState(movie?.available ?? false);
 
     const handleChangeTitle = (e) => {
         setTitle(e.target.value);
@@ -49,20 +56,42 @@ const NewMovie = ({ onMovieAdd }) => {
             available
         }
 
-        onMovieAdd(data);
+        const url = isEditing ? `http://localhost:3000/movies/${movie.id}` : "http://localhost:3000/movies";
 
-        setTitle("");
-        setAvailable(false);
-        setDuration(0);
-        setRating(0);
-        setSummary("");
-        setImageUrl("");
+        fetch(url, {
+            method: isEditing ? "PUT" : "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(res => {
+                if (!res.ok)
+                    return res.json().then(data => {
+                        errorToast(data.message);
+                        throw new Error(data.message);
+                    });
+
+                return res.json();
+            })
+            .then(res => {
+                onMovieAdd(res.data)
+                successToast(res.message)
+                setTitle("");
+                setAvailable(false);
+                setDuration(0);
+                setRating(0);
+                setSummary("");
+                setImageUrl("");
+            })
+            .catch(err => console.log(err))
     };
 
     return (
         <Card className="mx-auto my-4 shadow-lg border-secondary" bg="dark" text="light" style={{ maxWidth: "720px" }}>
             <Card.Body>
-                <Card.Title className="mb-3">Agregar película</Card.Title>
+                <Card.Title className="mb-3">{isEditing ? "Editar Pelicula" : "Agregar película"}</Card.Title>
                 <Form onSubmit={handleSubmit}>
                     <Row>
                         <Col md={8}>
@@ -145,7 +174,7 @@ const NewMovie = ({ onMovieAdd }) => {
                                     Volver
                                 </Button>
                                 <Button variant="success" type="submit">
-                                    Agregar película
+                                    {isEditing ? "Guardar" : "Agregar"}
                                 </Button>
                             </div>
                         </Col>
@@ -156,4 +185,4 @@ const NewMovie = ({ onMovieAdd }) => {
     );
 };
 
-export default NewMovie;
+export default MovieForm;

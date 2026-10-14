@@ -1,9 +1,12 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
+import { AuthenticationContext } from "../../services/auth/auth.context";
+import { errorToast, successToast } from "../../shared/toast/toast";
+import ToggleTheme from "../../ui/toggleTheme/ToggleTheme";
 
-const Login = ({ onLogin }) => {
-
+const Login = () => {
+    const { handleUserLogin } = useContext(AuthenticationContext)
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -32,25 +35,49 @@ const Login = ({ onLogin }) => {
 
         if (!emailRef.current.value.length) {
             setErrors({ ...errors, email: true });
-            alert("¡Email vacío!");
+            errorToast("¡Email vacío!");
             emailRef.current.focus();
             return;
         }
 
         if (!password.length || password.length < 7) {
             setErrors({ ...errors, password: true });
-            alert("¡Password vacío o demasiado corto!");
+            errorToast("¡Password vacío o demasiado corto!");
             passwordRef.current.focus();
             return;
         }
 
-        setErrors({ email: false, password: false });
-        alert(`El email ingresado es: ${email} y el password es ${password}`);
+        let data = {
+            email,
+            password
+        }
 
-    
-        onLogin();
-        navigate("/catalog");
+        fetch("http://localhost:3000/login", {
+            method: "POST",
+            headers: { "Content-type": "application/json" },
+            body: JSON.stringify(data)
+        })
+            .then(res => {
+                if (!res.ok)
+                    return res.json().then(data => {
+                        errorToast(data.message);
+                        throw new Error(data.message);
+                    });
+
+                return res.json();
+            })
+            .then(res => {
+                setErrors({ email: false, password: false });
+                successToast("Sesion iniciada con exito")
+                navigate("/catalog");
+                handleUserLogin(res.token);
+            })
+            .catch(err => console.log(err))
     };
+
+    const handleNavigateRegister = () => {
+        navigate("/register");
+    }
 
     return (
         <Card className="mt-5 mx-3 p-3 px-5 shadow">
@@ -62,7 +89,6 @@ const Login = ({ onLogin }) => {
                     <FormGroup className="mb-4">
                         <Form.Control
                             type="email"
-                            required
                             ref={emailRef}
                             placeholder="Ingresar email"
                             onChange={handleEmailChange}
@@ -73,7 +99,6 @@ const Login = ({ onLogin }) => {
                     <FormGroup className="mb-4">
                         <Form.Control
                             type="password"
-                            required
                             ref={passwordRef}
                             placeholder="Ingresar contraseña"
                             onChange={handlePasswordChange}
@@ -89,9 +114,16 @@ const Login = ({ onLogin }) => {
                         </p>
                     )}
 
-                    <Row>
-                        <Col />
-                        <Col md={6} className="d-flex justify-content-end">
+                    <Row className="justify-content-end">
+                        <Col xl={2} md={4} className="d-flex justify-content-end">
+                            <ToggleTheme />
+                        </Col>
+                        <Col xl={2} md={4} className="d-flex justify-content-end">
+                            <Button variant="secondary" onClick={handleNavigateRegister}>
+                                Registrarse
+                            </Button>
+                        </Col>
+                        <Col xl={2} md={4} className="d-flex justify-content-end">
                             <Button variant="secondary" type="submit">
                                 Iniciar sesión
                             </Button>

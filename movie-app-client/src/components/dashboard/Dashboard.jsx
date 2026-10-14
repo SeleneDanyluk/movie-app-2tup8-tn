@@ -1,24 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
-import NewMovie from '../newMovie/NewMovie.jsx';
+import MovieForm from '../movieForm/MovieForm.jsx';
 import Movies from '../movies/Movies.jsx';
 import MovieDetails from '../movieDetails/MovieDetails.jsx';
+import { AuthenticationContext } from '../services/auth/auth.context.jsx';
 
-const Dashboard = ({ onLogout }) => {
-
+const Dashboard = () => {
+  const { token, handleUserLogout } = useContext(AuthenticationContext);
   const navigate = useNavigate();
 
   const [movies, setMovies] = useState([]);
 
   const handleMovieAdd = (movieData) => {
-    const data = {
-      ...movieData,
-      id: Math.random()
-    }
-
-    setMovies((prevMovies) => [data, ...prevMovies]);
+    setMovies((prevMovies) => [movieData, ...prevMovies]);
     navigate("/catalog", { replace: true });
   }
 
@@ -27,15 +23,20 @@ const Dashboard = ({ onLogout }) => {
   }
 
   useEffect(() => {
-    fetch("http://localhost:3000/movies")
+    fetch("http://localhost:3000/movies", {
+      headers: {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    })
       .then(response => response.json())
       .then(data => setMovies(data))
       .catch(err => console.log(err))
-  }, [])
+  }, [token])
 
 
   const handleLogout = () => {
-    onLogout();
+    handleUserLogout();
     navigate("/login", { replace: true });
   }
 
@@ -59,7 +60,7 @@ const Dashboard = ({ onLogout }) => {
 
       <Routes>
         <Route index element={<Movies movies={movies} onMovieDelete={handleMovieDelete} />} />
-        <Route path="add-movie" element={<NewMovie onMovieAdd={handleMovieAdd} />} />
+        <Route path="add-movie" element={<MovieForm onMovieAdd={handleMovieAdd} />} />
         <Route path=":id" element={<MovieDetails />} />
       </Routes>
     </Container>

@@ -4,12 +4,15 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Badge from 'react-bootstrap/Badge';
 import ConfirmModal from '../ui/confirmModal/ConfirmModal.jsx';
+import { errorToast, successToast } from '../shared/toast/toast.js';
+import { useContext } from 'react';
+import { AuthenticationContext } from '../services/auth/auth.context.jsx';
 
 const MovieItem = ({ id, title, imageUrl, rating, duration, summary, available, onMovieDelete }) => {
+    const [showModal, setShowModal] = useState(false);
 
     const navigate = useNavigate();
-
-    const [showModal, setShowModal] = useState(false);
+    const { token } = useContext(AuthenticationContext);
 
     const handleSelect = () => {
         navigate(`${id}`, {
@@ -17,6 +20,14 @@ const MovieItem = ({ id, title, imageUrl, rating, duration, summary, available, 
                 movie: { id, title, imageUrl, rating, duration, summary, available }
             }
         });
+    }
+
+    const handleEditMovie = () => {
+        navigate("/catalog/add-movie", {
+            state: {
+                movie: { id, title, imageUrl, rating, duration, summary, available }
+            }
+        })
     }
 
     const handleDeleteClick = () => {
@@ -28,9 +39,28 @@ const MovieItem = ({ id, title, imageUrl, rating, duration, summary, available, 
     }
 
     const handleConfirmDelete = () => {
-        setShowModal(false);
-        onMovieDelete(id);
-    }
+        fetch(`http://localhost:3000/movies/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+        })
+            .then(res => {
+                if (!res.ok)
+                    return res.json().then(data => {
+                        errorToast(data.message);
+                        throw new Error(data.message);
+                    });
+
+                return res.json();
+            })
+            .then(data => {
+                successToast(data.message);
+                setShowModal(false);
+                onMovieDelete(id);
+            })
+            .catch(err => {
+                errorToast(err.message);
+            });
+    };
 
     return (
         <>
@@ -46,6 +76,7 @@ const MovieItem = ({ id, title, imageUrl, rating, duration, summary, available, 
                     <Card.Subtitle className="mb-2 text-warning">⭐ {rating} puntos · {duration} min</Card.Subtitle>
                     <Card.Text className="flex-grow-1 text-light-emphasis movie-card-summary">{summary}</Card.Text>
                     <div className="mt-auto d-grid gap-2">
+                        <Button variant="outline-warning" onClick={handleEditMovie}>Editar Pelicula</Button>
                         <Button variant="outline-light" onClick={handleSelect}>Seleccionar película</Button>
                         <Button variant="outline-danger" onClick={handleDeleteClick}>Eliminar película</Button>
                     </div>
@@ -60,7 +91,7 @@ const MovieItem = ({ id, title, imageUrl, rating, duration, summary, available, 
             />
         </>
     )
-    
+
 }
 
 export default MovieItem

@@ -1,8 +1,10 @@
 import express from 'express';
 import moviesRouter from './routes/movies.routes.js';
+import usersRouter from './routes/users.routes.js';
 import { sequelize } from './db.js';
 
-import Movie from './models/Movie.js';
+import Movie from './models/movie/Movie.js';
+import User from './models/user/User.js';
 
 const app = express();
 
@@ -16,12 +18,16 @@ try {
         res.setHeader('Access-Control-Allow-Headers', '*');
         next();
     });
+
     app.listen(port);
+
     app.use(moviesRouter);
+    app.use(usersRouter);        
+
     await sequelize.sync();
     console.log('Connection has been established successfully.');
 } catch (error) {
     console.error('Unable to connect to the database:', error);
 }
 
-console.log(`Server is running on port ${port}`); 
+console.log(`Server is running on port http://localhost:${port}`); 
