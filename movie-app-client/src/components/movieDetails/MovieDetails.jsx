@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -59,6 +59,7 @@ const MovieDetails = () => {
                 <Card.Text className="text-light-emphasis">
                     <strong>Reproducciones:</strong> {views}
                 </Card.Text>
+                <MovieWatch onMovieWatch={handleMovieWatch} />
                 <Button onClick={goBackHandler}>Volver a la página principal</Button>
             </Card.Body>
         </Card>
