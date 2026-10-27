@@ -13,11 +13,11 @@ const MovieForm = ({ onMovieAdd }) => {
 
     const { token } = useContext(AuthenticationContext);
 
-    const [title, setTitle] = useState(movie?.title);
-    const [duration, setDuration] = useState(movie?.duration);
-    const [imageUrl, setImageUrl] = useState(movie?.imageUrl);
-    const [rating, setRating] = useState(movie?.rating);
-    const [summary, setSummary] = useState(movie?.summary);
+    const [title, setTitle] = useState(movie?.title || "");
+    const [duration, setDuration] = useState(movie?.duration || "");
+    const [imageUrl, setImageUrl] = useState(movie?.imageUrl || "");
+    const [rating, setRating] = useState(movie?.rating || "");
+    const [summary, setSummary] = useState(movie?.summary || "");
     const [available, setAvailable] = useState(movie?.available ?? false);
 
     const handleChangeTitle = (e) => {
