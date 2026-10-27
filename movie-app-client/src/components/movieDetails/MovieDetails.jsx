@@ -17,10 +17,10 @@ const MovieDetails = () => {
         navigate("/catalog");
     };
 
-    const handleMovieWatch = () => {
+    const handleMovieWatch = useCallback(() => {
         setViews((prevState) => prevState + 1)
         successToast("Pelicula vista")
-    };
+    }, []);
 
     if (!movie) {
         return (

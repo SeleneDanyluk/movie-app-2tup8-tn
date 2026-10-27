@@ -4,6 +4,7 @@ import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useContext } from "react";
 import { AuthenticationContext } from "../services/auth/auth.context";
 import { errorToast, successToast } from "../shared/toast/toast";
+import MovieTitle from "./MovieTitle";
 
 const MovieForm = ({ onMovieAdd }) => {
     const navigate = useNavigate();
@@ -92,6 +93,7 @@ const MovieForm = ({ onMovieAdd }) => {
         <Card className="mx-auto my-4 shadow-lg border-secondary" bg="dark" text="light" style={{ maxWidth: "720px" }}>
             <Card.Body>
                 <Card.Title className="mb-3">{isEditing ? "Editar Pelicula" : "Agregar película"}</Card.Title>
+                <MovieTitle title={title}/>
                 <Form onSubmit={handleSubmit}>
                     <Row>
                         <Col md={8}>

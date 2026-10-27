@@ -1,3 +1,5 @@
+import { memo } from "react"
+
 const MovieTitle = ({ title }) => {
     console.log("In title")
   return (
@@ -5,4 +7,4 @@ const MovieTitle = ({ title }) => {
   )
 }
 
-export default MovieTitle
+export default memo(MovieTitle);
