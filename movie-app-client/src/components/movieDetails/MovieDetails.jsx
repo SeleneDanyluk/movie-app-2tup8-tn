@@ -1,11 +1,14 @@
 import { useLocation, useNavigate } from "react-router";
+import { useCallback, useState } from "react";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import MovieWatch from "./MovieWatch";
+import { successToast } from "../shared/toast/toast";
 
 
 const MovieDetails = () => {
-
+    const [views, setViews] = useState(0);
     const navigate = useNavigate();
     const { state } = useLocation();
     const movie = state?.movie;
@@ -13,6 +16,11 @@ const MovieDetails = () => {
     const goBackHandler = () => {
         navigate("/catalog");
     };
+
+    const handleMovieWatch = useCallback(() => {
+        setViews((prevState) => prevState + 1)
+        successToast("Pelicula vista")
+    }, []);
 
     if (!movie) {
         return (
@@ -48,6 +56,10 @@ const MovieDetails = () => {
                 <Card.Text className="text-light-emphasis">
                     <strong>Sinopsis:</strong> {summary}
                 </Card.Text>
+                <Card.Text className="text-light-emphasis">
+                    <strong>Reproducciones:</strong> {views}
+                </Card.Text>
+                <MovieWatch onMovieWatch={handleMovieWatch} />
                 <Button onClick={goBackHandler}>Volver a la página principal</Button>
             </Card.Body>
         </Card>
